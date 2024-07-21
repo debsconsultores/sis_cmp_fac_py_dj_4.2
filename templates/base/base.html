@@ -475,18 +475,76 @@
 
   {% block control_modal%}
   <script>
-    function abrir_modal(url)
-    {
+    // function abrir_modal(url)
+    // {
 
-      $("#popup").load(url, function(){
-        $(this).modal({
-          backdrop:'static',
+    //   $("#popup").load(url, function(){
+    //     $(this).modal({
+    //       backdrop:'static',
+    //       keyboard: false
+    //     })
+    //     $(this).modal('show');
+    //   });
+    //   return false;
+    // }
+    function abrir_modal(url) {
+      $("#popup").load(url, function () {
+          $(this).modal({
+          backdrop: 'static',
           keyboard: false
-        })
-        $(this).modal('show');
+          });
+          $(this).modal('show');
+          
+          // Intercepta el envío del formulario y maneja los errores sin cerrar la ventana modal
+          $("form").on("submit", function (e) {
+          e.preventDefault();
+          var form = $(this);
+          $.ajax({
+              type: form.attr("method"),
+              url: form.attr("action"),
+              data: form.serialize(),
+              headers: {
+                  "X-Requested-With": "XMLHttpRequest"
+              },
+              success: function (data) {
+                  $.alert({
+                      title:'',
+                      theme:'material',
+                      type:'green',
+                      content: "Registro Guardado Satisfactoriamente",
+                      onAction: function (btnName) {
+                          location.reload();
+                      }
+                  });
+
+              },
+              error: function (xhr) {
+              // Maneja los errores y muestra los mensajes en la ventana modal
+              var errors = JSON.parse(xhr.responseText).errors;
+              console.log(errors)
+              if (errors) {
+                  var errors = $.parseJSON(errors);
+                  console.log(errors.__all__)
+                  errors = errors.__all__
+
+                  // Iterar sobre los errores
+                  var messages = ""
+                  for (var i = 0; i < errors.length; i++) {
+
+                      // Obtener el mensaje del error
+                      var message = errors[i].message;
+                      messages += message + "\n"
+                      // Hacer algo con el mensaje
+                  }
+
+                  mensaje(messages)
+              }
+              }
+          });
+        });
       });
       return false;
-    }
+  }
 
     function cerrar_modal()
     {

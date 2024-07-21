@@ -26,7 +26,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY=config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["127.0.0.1",".herokuapp.com"]
 
@@ -86,12 +86,12 @@ WSGI_APPLICATION = 'app.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'db_djfull',
-        'HOST': 'localhost',
-        'USER': 'debs',
+        "ENGINE": "django.db.backends.postgresql",
+        'NAME': 'db_djcmpfc_42',
+        'HOST': '127.0.0.1',
+        'USER': 'postgres',
         'PASSWORD': '123456',
-        'PORT': 5435
+        'PORT': 5432
     }
 }
 
@@ -144,5 +144,7 @@ MEDIA_URL = '/media/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/login/'
 
-db_from_env = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(db_from_env)
+# db_from_env = dj_database_url.config(conn_max_age=500)
+# DATABASES['default'].update(db_from_env)
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

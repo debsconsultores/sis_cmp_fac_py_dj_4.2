@@ -29,36 +29,62 @@
         <th>Teléfono</th>
         <th>EMail</th>
         <th>Estado</th>
-        <th class="all">Acciones</th>
+        <!-- <th class="all">Acciones</th> -->
+         <th></th>
+         <!-- <th></th> -->
       </thead>
       <tbody>
-        {% for item in obj%}
-        <tr>
-          <td>{{ item.id }}</td>
-          <td>{{ item.descripcion }}</td>
-          <td>{{item.direccion}}</td>
-          <td>{{ item.contacto }}</td>
-          <td>{{ item.telefono }}</td>
-          <td>{{ item.email }}</td>
-          <td>{{item.estado|yesno:"Activo,Inactivo"}}</td>
-          <td>
-            <button class="btn btn-warning btn-circle" onclick="return abrir_modal('{% url 'cmp:proveedor_edit' item.id %}')"><i class="far fa-edit"></i></button>
-            <button class="btn btn-warning btn-circle" onclick="return abrir_modal('{% url 'cmp:proveedor_inactivar' item.id %}')">
-              <i class="far fa-thumbs-down"></i>
-            </button>
-          </td>
-        </tr>
-        {% endfor %}
       </tbody>
     </table>
   </div>
 </div>
+<!-- <button class="btn btn-warning btn-circle" onclick="return abrir_modal('{#% url 'cmp:proveedor_edit' item.id %#}')"><i class="far fa-edit"></i></button>
+            <button class="btn btn-warning btn-circle" onclick="return abrir_modal('{#% url 'cmp:proveedor_inactivar' item.id %#}')">
+              <i class="far fa-thumbs-down"></i>
+            </button> -->
 {% endblock %}
 {% block js_page %}
 <script>
 // Call the dataTables jQuery plugin
 $(document).ready(function() {
-  $('.table').DataTable();
+  $('.table').DataTable({
+    "processing":true,
+    "serverSide":true,
+    "deferRender":true,
+    "iDisplayLength":25,
+    "paging":true,
+    "ajax":{
+      "url": "{% url 'api:prv_list' %}",
+      "dataSrc":""
+    },
+    "columns": [
+      { "data": "id" },
+      { "data": "descripcion" },
+      { "data": "direccion" },
+      { "data": "contacto" },
+      { "data": "telefono" },
+      { "data": "email" },
+      { "data": "estado",
+        "render":function(data,type,row){
+          return data ? "Activo" : "Inactivo"
+        }
+       },
+      { "data": null,
+        "render": function(data,type,row){
+          console.log(row)
+          const iconClass = row.estado ? "far fa-thumbs-down" : "far fa-thumbs-up"
+          const iconColor = row.estado ? "btn-danger" : "btn-success"
+          return `
+            <button class="btn btn-warning btn-circle" onclick="return abrir_modal('/cmp/proveedores/edit/${row.id}')"><i class="far fa-edit"></i></button>
+            <button class="btn ${iconColor} btn-circle" onclick="return abrir_modal('/cmp/proveedores/inactivar/${row.id}')">
+              <i class="${iconClass}"></i>
+            </button>
+          `;
+        }
+       },
+      // { "data": null },
+    ]
+  });
 });
 </script>
 {% endblock %}

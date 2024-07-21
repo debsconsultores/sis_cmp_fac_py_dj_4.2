@@ -3,8 +3,10 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+from rest_framework import generics
 
-from .serializers import ProductoSerializer,ClienteSerializer
+
+from .serializers import *
 from inv.models import Producto
 from fac.models import Cliente
 
@@ -29,3 +31,7 @@ class ClienteList(APIView):
         obj = Cliente.objects.all()
         data = ClienteSerializer(obj,many=True).data
         return Response(data)
+    
+class ProveedorListView(generics.ListAPIView):
+    queryset = Proveedor.objects.all().order_by("id")
+    serializer_class = ProveedorSerializer

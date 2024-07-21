@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views import generic
 from django.urls import reverse_lazy
@@ -253,6 +254,14 @@ class ProductoNew(SuccessMessageMixin,SinPrivilegios,
         context["categorias"] = Categoria.objects.all()
         context["subcategorias"] = SubCategoria.objects.all()
         return context
+    
+    def form_invalid(self, form):
+        is_ajax = self.request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+        if is_ajax:
+            errors = form.errors.as_json()
+            return JsonResponse({'errors': errors}, status=400)
+        else:
+            return super().form_invalid(form)
 
 
 
@@ -279,6 +288,14 @@ class ProductoEdit(SuccessMessageMixin,SinPrivilegios,
         context["obj"] = Producto.objects.filter(pk=pk).first()
 
         return context
+
+    def form_invalid(self, form):
+        is_ajax = self.request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+        if is_ajax:
+            errors = form.errors.as_json()
+            return JsonResponse({'errors': errors}, status=400)
+        else:
+            return super().form_invalid(form)
 
 
 @login_required(login_url="/login/")

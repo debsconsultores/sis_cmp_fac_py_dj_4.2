@@ -89,3 +89,16 @@ class ProductoForm(forms.ModelForm):
             })
         self.fields['ultima_compra'].widget.attrs['readonly'] = True
         self.fields['existencia'].widget.attrs['readonly'] = True
+
+    def clean(self):
+        try:
+            sc = Producto.objects.get(
+                codigo=self.cleaned_data['codigo'].upper()
+            )
+            if not self.instance.pk:
+                raise forms.ValidationError("Registro ya existe")
+            elif self.instance.pk!= sc.pk:
+                raise forms.ValidationError("Cambio No permitido, coincide con otro registro")
+        except Producto.DoesNotExist:
+            pass
+        return self.cleaned_data

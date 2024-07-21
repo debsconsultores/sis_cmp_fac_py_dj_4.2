@@ -9,12 +9,14 @@
                     <div class="col mr-2">
                       <div class="text-xs font-weight-bold text-warning text-uppercase">
                           <div class="alert">
-                              ¿ Inactivar <b>{{ obj.descripcion }} </b> ?
+                              ¿ {% if obj.estado %} Inactivar {% else %} Activar {% endif %} <b>{{ obj.descripcion }} </b> ?
                           </div>
                       </div>
                     </div>
                     <div class="row">
-                      <button type="button" class="btn btn-danger" id="btnInactivar"><i class="far fa-question-circle"></i>Si, Inactivar</button>
+                      <button type="button" class="btn btn-danger" id="btnInactivar">
+                        <i class="far fa-question-circle"></i>Si, {% if obj.estado %} Inactivar {% else %} Activar {% endif %}
+                      </button>
                       <button type="button" class="btn btn-success" onclick="return cerrar_modal()">
                           No, Cancelar
                       </button>
@@ -62,6 +64,7 @@ $(document).ready(function(){
           //alert(response);
           var tipo=(response.startsWith('Proveedor no existe') ? 'red':'green' );
           mensaje(response,tipo);
+          $('.table').DataTable().ajax.reload()
         },
         error: function(jqXHR, textStatus, errorThrow){
           console.log(textStatus, errorThrow);
